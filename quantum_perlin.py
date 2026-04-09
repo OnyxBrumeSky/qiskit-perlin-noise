@@ -7,17 +7,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.colors import ListedColormap
 from scipy.ndimage import uniform_filter
-
-# ── 1. SEED → distribution N-dimensionnelle ───────────────────────────────────
-def make_seed_distribution_nd(seed: int, n_gr: int, n_dims: int) -> np.ndarray:
-    """
-    Génère une distribution sur 2^(n_gr * n_dims) points.
-    Chaque dimension a n_gr qubits GR → 2^n_gr bins par axe.
-    """
-    rng = np.random.default_rng(seed)
-    total_bins = 2 ** (n_gr * n_dims)
-    raw = rng.random(total_bins) + 0.05
-    return raw / raw.sum()
+from qiskit.circuit.library import StatePreparation
+from distribution_generator import DistributionGenerator, make_distribution
 
 # ── 2. CIRCUIT N-DIMENSIONNEL ─────────────────────────────────────────────────
 def grover_rudolph_nd(p: np.ndarray, n_gr: int, n_qft: int, n_dims: int) -> QuantumCircuit:
@@ -56,8 +47,12 @@ def grover_rudolph_nd(p: np.ndarray, n_gr: int, n_qft: int, n_dims: int) -> Quan
         encode_node(node_probs[:mid], qubits_left[1:], controls + [qubit])
         encode_node(node_probs[mid:], qubits_left[1:], controls + [qubit])
 
-    encode_node(p, all_gr_qubits, [])
-    gate = qc1.to_gate()
+    #encode_node(p, all_gr_qubits, [])
+    #gate = qc1.to_gate()
+
+    state_prep = StatePreparation(p)
+    gate = state_prep.to_gate()
+    
     gate.name = "Grover Rodolph Gate"
     qc.compose(gate, inplace=True)
 
