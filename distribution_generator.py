@@ -4,15 +4,11 @@ Générateur de distribution de probabilité pour circuit quantique (Qiskit)
 Utilisation :
     gen = DistributionGenerator(n_states=4, dist_type="random", seed=42)
     probs      = gen.probabilities       # numpy array
-    circuit    = gen.circuit             # QuantumCircuit prêt à l'emploi
     gen.summary()                        # affiche un résumé
     gen.plot()                           # histogramme matplotlib
 """
 
 import numpy as np
-from qiskit import QuantumCircuit, transpile
-from qiskit.circuit.library import StatePreparation
-
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Types de distributions disponibles
@@ -98,8 +94,6 @@ class DistributionGenerator:
     probabilities : np.ndarray   — tableau de probabilités (somme = 1)
     amplitudes    : np.ndarray   — amplitudes quantiques (√P)
     n_qubits      : int          — nombre de qubits nécessaires
-    circuit       : QuantumCircuit — circuit avec mesures
-    circuit_no_measure : QuantumCircuit — circuit sans mesures (pour composition)
     """
 
     def __init__(
@@ -127,8 +121,6 @@ class DistributionGenerator:
         self.probabilities = self._build_probabilities()
         self.amplitudes    = self._build_amplitudes()
         self.n_qubits      = int(np.ceil(np.log2(max(self.n_states, 2))))
-        self.circuit_no_measure = self._build_circuit(measure=False)
-        self.circuit            = self._build_circuit(measure=True)
 
     # ── Méthodes privées ──────────────────────────────────────────────────────
 
@@ -163,13 +155,6 @@ class DistributionGenerator:
             amps = np.pad(amps, (0, full_size - self.n_states))
         norm = np.linalg.norm(amps)
         return amps / norm
-
-    def _build_circuit(self, measure: bool) -> QuantumCircuit:
-        qc = QuantumCircuit(self.n_qubits)
-        qc.append(StatePreparation(self.amplitudes), range(self.n_qubits))
-        if measure:
-            qc.measure_all()
-        return qc
 
     # ── API publique ──────────────────────────────────────────────────────────
 
@@ -229,24 +214,6 @@ class DistributionGenerator:
         plt.tight_layout()
         plt.show()
 
-    def simulate(self, shots: int = 100_000) -> dict:
-        """
-        Simule le circuit avec AerSimulator et retourne les probabilités mesurées.
-
-        Retourne
-        --------
-        dict : { état_binaire: probabilité_estimée }
-        """
-        try:
-            from qiskit_aer import AerSimulator
-        except ImportError:
-            raise ImportError("qiskit-aer requis : pip install qiskit-aer")
-
-        sim = AerSimulator()
-        job = sim.run(transpile(self.circuit, sim), shots=shots)
-        counts = job.result().get_counts()
-        return {k: v / shots for k, v in sorted(counts.items())}
-
     def regenerate(self, seed=None) -> "DistributionGenerator":
         """
         Retourne une nouvelle instance avec une seed différente
@@ -258,27 +225,6 @@ class DistributionGenerator:
             seed=seed,
             custom_weights=self.custom_weights,
         )
-
-
-# ─────────────────────────────────────────────────────────────────────────────
-# Fonction utilitaire rapide
-# ─────────────────────────────────────────────────────────────────────────────
-
-def make_distribution(
-    n_states: int = 4,
-    dist_type: str = "random",
-    seed: int | str | None = None,
-    custom_weights: list | None = None,
-) -> tuple[np.ndarray, QuantumCircuit]:
-    """
-    Raccourci : retourne (probabilités, circuit) directement.
-
-    Exemple
-    -------
-    probs, qc = make_distribution(n_states=8, dist_type="gaussian", seed=42)
-    """
-    gen = DistributionGenerator(n_states, dist_type, seed, custom_weights)
-    return gen.probabilities, gen.circuit
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -310,7 +256,3 @@ if __name__ == "__main__":
     )
     g5.summary()
 
-    print("\n── 6. Raccourci make_distribution ───────────────")
-    probs, qc = make_distribution(n_states=4, dist_type="exponential", seed=7)
-    print(f"  Probabilités : {probs.round(4)}")
-    print(f"  Circuit      : {qc.num_qubits} qubits, {qc.depth()} couches")

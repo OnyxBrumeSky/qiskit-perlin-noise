@@ -2,18 +2,15 @@
 I am trying to produce a perlin noise and produce it to N dimmensions using quantum programming. 
 My steps are : generate random amplitude for states. Then load it to quantum states using Grover Rodolph algo. Then aply qft interpolation to smooth the result.
 Here are my latest outputs :
-![alt text](image.png)
-
-# Evolution of projet
-Success. After using the StepPreparation from qiskit and creating a static circuit, the perlin noise seems to be working as expected. 
-
-The circuit now looks like this : 
+1D comparison
 ![alt text](image-1.png)
-Notice that all the measurements are not shown as it didn't fit on my screen.
-
-The file containing the work is perlinv2.py.
-My next step is to clean everything and make it as a reusable python library and maybe a rust library too.
-
+2D with minecraft like biome style
+![alt text](image.png)
+3D with third dimension for color
+![alt text](image-2.png)
+# Evolution of projet
+I added a 3D visualisation with the third dimension a color map
+I also cleaned the code and made it fit in a class
 
 
 Sources : 
@@ -25,5 +22,3 @@ Sources :
 6) https://medium.com/qiskit/introducing-procedural-generation-using-quantum-computation-956e67603d95
 7) https://medium.com/qiskit/introducing-a-quantum-procedure-for-map-generation-eb6663a3f13d
 8) https://arxiv.org/pdf/2203.06196
-
-The code has been generated with claude and supervised by me
