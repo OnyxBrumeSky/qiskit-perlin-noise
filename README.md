@@ -62,7 +62,7 @@ This step acts as an interpolation mechanism that:
 
 ### 1D
 A smooth probability distribution emerges, resembling classical Perlin noise in one dimension.
-![alt text](image-3.png)
+![alt text](image-1.png)
 
 ### 2D
 
