@@ -185,4 +185,3 @@ if __name__ == "__main__":
 5. [https://arxiv.org/pdf/2203.06196](https://arxiv.org/pdf/2203.06196)
 6. [https://medium.com/qiskit/introducing-procedural-generation-using-quantum-computation-956e67603d95](https://medium.com/qiskit/introducing-procedural-generation-using-quantum-computation-956e67603d95)
 7. [https://medium.com/qiskit/introducing-a-quantum-procedure-for-map-generation-eb6663a3f13d](https://medium.com/qiskit/introducing-a-quantum-procedure-for-map-generation-eb6663a3f13d)
-8. [https://arxiv.org/pdf/2203.06196](https://arxiv.org/pdf/2203.06196)
