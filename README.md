@@ -115,13 +115,13 @@ To extract coordinates from measurement results:
 ### Example
 
 ```
-|00001 00110⟩ → 00001 | 00110 → (1, 3)
+|00001 00011⟩ → 00001 | 00011 → (1, 3)
 ```
 
 So:
 
 * `00001` → 1
-* `00110` → 3
+* `00011` → 3
 
 This method generalizes to N dimensions by increasing the number of chunks.
 
